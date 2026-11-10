@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Basis</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+
+    <div class="app-shell">
+
+        <header class="top-bar">
+            <div class="brand">
+                <span class="brand-mark">&Sigma;</span>
+                <span class="brand-name">Basis</span>
+            </div>
+
+            <div class="player-stats">
+                <div class="stat-pill streak-pill" title="Consecutive correct answers">
+                    <span class="stat-icon">&#128293;</span>
+                    <span id="streak-value">0</span>
+                    <span class="stat-sub" id="best-streak-value"></span>
+                </div>
+                <div class="stat-pill level-pill" title="Experience level">
+                    <span class="level-tag">Lv <span id="level-value">1</span></span>
+                    <div class="xp-bar-track">
+                        <div id="xp-bar-fill" class="xp-bar-fill"></div>
+                    </div>
+                    <span id="xp-value" class="stat-sub">0 XP</span>
+                </div>
+            </div>
+        </header>
+
+        <main class="main-area">
+
+            <!-- topic / skill tree screen -->
+            <section id="topic-screen" class="screen">
+                <div class="screen-head">
+                    <h1>Skill Tree</h1>
+                    <p class="subhead">Pick a node to practice. Node color shows mastery &mdash; red to green as it rises. Grey nodes are locked until their prerequisites are strong enough.</p>
+                </div>
+                <div class="tree-scroll">
+                    <svg id="skill-tree-svg" xmlns="http://www.w3.org/2000/svg"></svg>
+                </div>
+            </section>
+
+            <!-- active problem screen -->
+            <section id="problem-screen" class="screen hidden">
+                <div class="problem-top">
+                    <button id="change-topic-btn" class="btn-ghost">&larr; Skill Tree</button>
+                    <span id="current-topic-label" class="topic-label"></span>
+                    <span id="difficulty-badge" class="badge"></span>
+                </div>
+
+                <div class="mastery-progress">
+                    <div class="mastery-progress-track">
+                        <div id="mastery-progress-fill" class="mastery-progress-fill"></div>
+                    </div>
+                    <span id="mastery-progress-label" class="mastery-progress-label"></span>
+                </div>
+
+                <div id="problem-card" class="problem-card">
+                    <p id="question-text" class="question"></p>
+
+                    <form id="answer-form" autocomplete="off">
+                        <input type="text" id="answer-input" placeholder="Type your answer&hellip;" autofocus>
+                        <button type="submit" class="btn-primary" id="check-btn">Check</button>
+                    </form>
+
+                    <p id="feedback" class="feedback hidden"></p>
+                </div>
+
+                <p id="unlock-banner" class="unlock-banner hidden"></p>
+
+                <div class="session-footer">
+                    <div id="session-progress-dots" class="session-progress-dots"></div>
+                    <div id="post-answer-actions" class="post-answer-actions hidden">
+                        <button id="next-problem-btn" class="btn-primary">Next problem</button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- session summary screen -->
+            <section id="summary-screen" class="screen hidden">
+                <div class="summary-card">
+                    <p class="summary-kicker" id="summary-topic-label"></p>
+                    <h2>Session Summary</h2>
+
+                    <div class="summary-grid">
+                        <div class="summary-stat">
+                            <span class="summary-value" id="summary-attempted">0</span>
+                            <span class="summary-label">Problems</span>
+                        </div>
+                        <div class="summary-stat">
+                            <span class="summary-value" id="summary-accuracy">0%</span>
+                            <span class="summary-label">Accuracy</span>
+                        </div>
+                        <div class="summary-stat">
+                            <span class="summary-value" id="summary-xp">+0</span>
+                            <span class="summary-label">XP earned</span>
+                        </div>
+                        <div class="summary-stat">
+                            <span class="summary-value" id="summary-streak">0</span>
+                            <span class="summary-label">Current streak</span>
+                        </div>
+                    </div>
+
+                    <div class="summary-mastery">
+                        <div class="summary-mastery-row">
+                            <span class="summary-label">Mastery</span>
+                            <span id="summary-mastery-text"></span>
+                        </div>
+                        <div class="summary-mastery-bar">
+                            <div id="summary-mastery-fill" class="summary-mastery-fill"></div>
+                            <div id="summary-mastery-marker" class="summary-mastery-marker" title="mastery at session start"></div>
+                        </div>
+                    </div>
+
+                    <button id="summary-continue-btn" class="btn-primary">Back to Skill Tree</button>
+                </div>
+            </section>
+
+        </main>
+    </div>
+
+    <script src="/static/app.js"></script>
+</body>
+</html>

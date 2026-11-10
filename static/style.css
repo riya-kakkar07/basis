@@ -1,0 +1,572 @@
+/* Basis - dark theme, card-based layout, Inter type.
+   Mastery is visualized on a red -> yellow -> green hue ramp everywhere
+   (skill tree nodes, progress bars, summary bar) - computed in app.js and
+   applied as inline styles, so the palette stays in exactly one place. */
+
+:root {
+    --bg: #0a0c11;
+    --bg-elevated: #10131b;
+    --card: #161a24;
+    --card-border: #262c3d;
+    --card-border-soft: #1d2230;
+    --text: #edeef3;
+    --text-dim: #9aa1b4;
+    --text-faint: #666d82;
+    --accent: #7c6cf6;
+    --accent-soft: rgba(124, 108, 246, 0.16);
+    --accent-strong: #9b8dfb;
+    --danger: #ef5b6b;
+    --danger-soft: rgba(239, 91, 107, 0.14);
+    --success: #35c472;
+    --success-soft: rgba(53, 196, 114, 0.14);
+    --radius: 14px;
+    --mono: "JetBrains Mono", "Courier New", monospace;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    background: var(--bg);
+    background-image:
+        radial-gradient(circle at 15% 0%, rgba(124, 108, 246, 0.10), transparent 45%),
+        radial-gradient(circle at 85% 20%, rgba(53, 196, 114, 0.06), transparent 40%);
+    color: var(--text);
+    font-family: "Inter", -apple-system, "Segoe UI", Helvetica, Arial, sans-serif;
+    min-height: 100vh;
+}
+
+.app-shell {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 20px 24px 64px;
+}
+
+/* ---------------------------------------------------------------- top bar */
+
+.top-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 16px;
+    padding: 14px 20px;
+    background: var(--bg-elevated);
+    border: 1px solid var(--card-border-soft);
+    border-radius: var(--radius);
+    margin-bottom: 28px;
+}
+
+.brand {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.brand-mark {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    border-radius: 9px;
+    background: linear-gradient(135deg, var(--accent), #4f46d6);
+    color: white;
+    font-weight: 700;
+    font-size: 17px;
+}
+
+.brand-name {
+    font-weight: 700;
+    font-size: 18px;
+    letter-spacing: 0.2px;
+}
+
+.player-stats {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.stat-pill {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 7px 14px;
+    background: var(--card);
+    border: 1px solid var(--card-border);
+    border-radius: 999px;
+    font-size: 13.5px;
+    font-weight: 600;
+}
+
+.stat-icon {
+    font-size: 15px;
+}
+
+.stat-sub {
+    color: var(--text-dim);
+    font-weight: 500;
+    font-size: 12px;
+    font-family: var(--mono);
+}
+
+.level-tag {
+    color: var(--accent-strong);
+    font-weight: 700;
+}
+
+.xp-bar-track {
+    width: 72px;
+    height: 6px;
+    border-radius: 999px;
+    background: #272c3c;
+    overflow: hidden;
+}
+
+.xp-bar-fill {
+    height: 100%;
+    width: 0%;
+    background: linear-gradient(90deg, var(--accent), var(--accent-strong));
+    border-radius: 999px;
+    transition: width 0.4s ease;
+}
+
+/* ------------------------------------------------------------- screens */
+
+.hidden {
+    display: none !important;
+}
+
+.screen-head {
+    margin-bottom: 20px;
+}
+
+.screen-head h1 {
+    font-size: 24px;
+    margin: 0 0 6px;
+    font-weight: 700;
+}
+
+.subhead {
+    color: var(--text-dim);
+    font-size: 14px;
+    margin: 0;
+    max-width: 640px;
+}
+
+/* --------------------------------------------------------------- skill tree */
+
+.tree-scroll {
+    overflow-x: auto;
+    overflow-y: hidden;
+    padding: 8px 4px 24px;
+    background: var(--bg-elevated);
+    border: 1px solid var(--card-border-soft);
+    border-radius: var(--radius);
+}
+
+#skill-tree-svg {
+    display: block;
+}
+
+.tree-edge {
+    fill: none;
+    stroke: #343a4d;
+    stroke-width: 2;
+}
+
+.tree-node {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 3px;
+    text-align: center;
+    padding: 6px 10px;
+    border: 2px solid #343a4d;
+    border-radius: 12px;
+    background: #171b26;
+    cursor: pointer;
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+    font-family: "Inter", sans-serif;
+}
+
+.tree-node:hover:not(.locked) {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 22px rgba(0, 0, 0, 0.45);
+}
+
+.tree-node.locked {
+    cursor: not-allowed;
+    opacity: 0.45;
+    background: #13151c;
+    border-color: #2a2e3a;
+}
+
+.tree-node-label {
+    font-weight: 600;
+    font-size: 12.5px;
+    color: var(--text);
+    line-height: 1.2;
+}
+
+.tree-node.locked .tree-node-label {
+    color: var(--text-faint);
+}
+
+.tree-node-sub {
+    font-size: 10.5px;
+    font-family: var(--mono);
+    color: var(--text-dim);
+}
+
+/* ------------------------------------------------------------ problem screen */
+
+.problem-top {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-bottom: 18px;
+}
+
+.topic-label {
+    font-weight: 600;
+    font-size: 15px;
+    flex: 1;
+}
+
+.btn-ghost {
+    background: none;
+    border: 1px solid var(--card-border);
+    color: var(--text-dim);
+    font-family: inherit;
+    font-size: 13px;
+    font-weight: 600;
+    padding: 8px 14px;
+    border-radius: 999px;
+    cursor: pointer;
+    transition: border-color 0.15s ease, color 0.15s ease;
+}
+
+.btn-ghost:hover {
+    border-color: var(--accent);
+    color: var(--text);
+}
+
+.badge {
+    font-size: 12.5px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+    padding: 5px 12px;
+    border-radius: 999px;
+    background: var(--accent-soft);
+    color: var(--accent-strong);
+}
+
+.mastery-progress {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 22px;
+}
+
+.mastery-progress-track {
+    flex: 1;
+    height: 8px;
+    border-radius: 999px;
+    background: #1d2230;
+    overflow: hidden;
+}
+
+.mastery-progress-fill {
+    height: 100%;
+    width: 0%;
+    border-radius: 999px;
+    transition: width 0.5s ease, background 0.5s ease;
+}
+
+.mastery-progress-label {
+    font-size: 12.5px;
+    font-family: var(--mono);
+    color: var(--text-dim);
+    white-space: nowrap;
+}
+
+.problem-card {
+    background: var(--card);
+    border: 1px solid var(--card-border);
+    border-radius: var(--radius);
+    padding: 48px 36px;
+    text-align: center;
+    transition: border-color 0.2s ease;
+}
+
+.question {
+    font-family: var(--mono);
+    font-size: clamp(22px, 4vw, 32px);
+    font-weight: 600;
+    line-height: 1.5;
+    margin: 0 0 32px;
+    word-break: break-word;
+}
+
+#answer-form {
+    display: flex;
+    gap: 12px;
+    max-width: 420px;
+    margin: 0 auto;
+}
+
+#answer-input {
+    flex: 1;
+    font-family: var(--mono);
+    font-size: 17px;
+    padding: 13px 16px;
+    border: 1px solid var(--card-border);
+    border-radius: 10px;
+    background: var(--bg-elevated);
+    color: var(--text);
+}
+
+#answer-input:focus {
+    outline: none;
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px var(--accent-soft);
+}
+
+#answer-input:disabled {
+    opacity: 0.6;
+}
+
+.btn-primary {
+    font-size: 14.5px;
+    font-weight: 700;
+    padding: 13px 22px;
+    border-radius: 10px;
+    border: none;
+    background: linear-gradient(135deg, var(--accent), #5c4fe0);
+    color: white;
+    cursor: pointer;
+    font-family: inherit;
+    transition: transform 0.1s ease, box-shadow 0.15s ease;
+}
+
+.btn-primary:hover {
+    box-shadow: 0 6px 18px var(--accent-soft);
+}
+
+.btn-primary:active {
+    transform: translateY(1px);
+}
+
+.btn-primary:disabled {
+    opacity: 0.55;
+    cursor: default;
+    box-shadow: none;
+}
+
+.feedback {
+    margin-top: 24px;
+    padding: 14px 16px;
+    border-radius: 10px;
+    font-size: 14.5px;
+    font-weight: 600;
+}
+
+.feedback.correct {
+    background: var(--success-soft);
+    color: var(--success);
+}
+
+.feedback.incorrect {
+    background: var(--danger-soft);
+    color: var(--danger);
+}
+
+.unlock-banner {
+    margin: 16px 0 0;
+    padding: 12px 16px;
+    border-radius: 10px;
+    font-size: 13.5px;
+    font-weight: 600;
+    background: var(--success-soft);
+    color: var(--success);
+    text-align: center;
+}
+
+.session-footer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+    margin-top: 24px;
+}
+
+.session-progress-dots {
+    display: flex;
+    gap: 7px;
+}
+
+.progress-dot {
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+    background: #272c3c;
+    display: inline-block;
+}
+
+.progress-dot.correct {
+    background: var(--success);
+}
+
+.progress-dot.incorrect {
+    background: var(--danger);
+}
+
+/* ------------------------------------------------------- correct/wrong flashes */
+
+@keyframes flash-correct {
+    0% { box-shadow: 0 0 0 0 rgba(53, 196, 114, 0.55); border-color: var(--success); }
+    100% { box-shadow: 0 0 0 18px rgba(53, 196, 114, 0); border-color: var(--card-border); }
+}
+
+.problem-card.flash-correct {
+    animation: flash-correct 0.7s ease-out;
+}
+
+@keyframes shake-wrong {
+    10%, 90% { transform: translateX(-1px); }
+    20%, 80% { transform: translateX(2px); }
+    30%, 50%, 70% { transform: translateX(-5px); }
+    40%, 60% { transform: translateX(5px); }
+}
+
+.problem-card.shake-wrong {
+    animation: shake-wrong 0.5s ease-in-out;
+    border-color: var(--danger);
+}
+
+/* ------------------------------------------------------------ summary screen */
+
+.summary-card {
+    max-width: 480px;
+    margin: 40px auto 0;
+    background: var(--card);
+    border: 1px solid var(--card-border);
+    border-radius: var(--radius);
+    padding: 36px 32px;
+    text-align: center;
+}
+
+.summary-kicker {
+    margin: 0 0 4px;
+    color: var(--text-dim);
+    font-size: 13px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.summary-card h2 {
+    margin: 0 0 28px;
+    font-size: 22px;
+    font-weight: 700;
+}
+
+.summary-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+    margin-bottom: 28px;
+}
+
+.summary-stat {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    padding: 16px 0;
+    background: var(--bg-elevated);
+    border-radius: 10px;
+}
+
+.summary-value {
+    font-size: 24px;
+    font-weight: 700;
+    font-family: var(--mono);
+}
+
+.summary-label {
+    font-size: 12px;
+    color: var(--text-dim);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+}
+
+.summary-mastery {
+    margin-bottom: 28px;
+}
+
+.summary-mastery-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    margin-bottom: 8px;
+}
+
+.summary-mastery-row .summary-label {
+    text-transform: none;
+}
+
+#summary-mastery-text {
+    font-family: var(--mono);
+    font-size: 13.5px;
+    color: var(--text-dim);
+}
+
+.summary-mastery-bar {
+    position: relative;
+    height: 10px;
+    border-radius: 999px;
+    background: #1d2230;
+    overflow: visible;
+}
+
+.summary-mastery-fill {
+    height: 100%;
+    width: 0%;
+    border-radius: 999px;
+    transition: width 0.6s ease, background 0.6s ease;
+}
+
+.summary-mastery-marker {
+    position: absolute;
+    top: -3px;
+    width: 2px;
+    height: 16px;
+    background: var(--text);
+    opacity: 0.7;
+}
+
+/* --------------------------------------------------------------- responsive */
+
+@media (max-width: 560px) {
+    .app-shell {
+        padding: 16px 14px 48px;
+    }
+    .top-bar {
+        padding: 12px 14px;
+    }
+    .problem-card {
+        padding: 32px 18px;
+    }
+    .summary-grid {
+        grid-template-columns: 1fr 1fr;
+    }
+}
